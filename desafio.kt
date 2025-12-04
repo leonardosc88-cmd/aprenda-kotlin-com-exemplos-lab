@@ -1,21 +1,57 @@
-// [Template no Kotlin Playground](https://pl.kotl.in/WcteahpyN)
+enum class Nivel { BASICO, INTERMEDIARIO, AVANÇADO }
 
-enum class Nivel { BASICO, INTERMEDIARIO, DIFICIL }
+// Representa um usuario/aluno
+data class Usuario(val nome: String, val email: String)
 
-class Usuario
+// Representa um conteudo educacional
+data class ConteudoEducacional(val nome: String, val duracao: Int = 60)
 
-data class ConteudoEducacional(var nome: String, val duracao: Int = 60)
-
-data class Formacao(val nome: String, var conteudos: List<ConteudoEducacional>) {
-
+// Representa uma formacao composta por conteudos e alunos inscritos
+data class Formacao(
+    val nome: String, 
+    val nivel: Nivel,
+    val conteudos: List<ConteudoEducacional>
+) {
     val inscritos = mutableListOf<Usuario>()
-    
+
     fun matricular(usuario: Usuario) {
-        TODO("Utilize o parâmetro $usuario para simular uma matrícula (usar a lista de $inscritos).")
+        if (usuario !in inscritos) {
+            inscritos.add(usuario)
+            println("Usuário ${usuario.nome} matriculado na $nome")
+        } else {
+            println("Usuário ${usuario.nome} já está matriculado na $nome")
+        }
     }
+
+    fun cargaHorariaTotal(): Int = conteudos.sumOf {it.duracao}
 }
 
 fun main() {
-    TODO("Analise as classes modeladas para este domínio de aplicação e pense em formas de evoluí-las.")
-    TODO("Simule alguns cenários de teste. Para isso, crie alguns objetos usando as classes em questão.")
+    // Criando conteudos
+    val kotlinBasico = ConteudoEducacional("Kotlin Básico", 90)
+    val kotlinAvancado = ConteudoEducacional("Kotlin Avançado", 120)
+    val springBoot = ConteudoEducacional("Spring Boot", 100)
+
+    // Criando Formacao
+    val formacaoKotlin = Formacao(
+        nome = "Formação Kotlin Developer",
+        nivel = Nivel.INTERMEDIARIO,
+        conteudos = listOf(kotlinBasico, kotlinAvancado, springBoot)
+    )
+
+    // Criando usuarios
+    val usuario1 = Usuario("Leonardo", "leonardo@email.com") 
+    val usuario2 = Usuario("Mariana", "mariana@email.com")
+
+    // Matriculando usuarios
+    formacaoKotlin.matricular(usuario1)
+    formacaoKotlin.matricular(usuario2)
+    formacaoKotlin.matricular(usuario1) // teste de duplicidade
+
+    // Exibindo informacoes
+    println("\nFormação: ${formacaoKotlin.nome}")
+    println("Nível: ${formacaoKotlin.nivel}")
+    println("Carga horária total: ${formacaoKotlin.cargaHorariaTotal()} minutos")
+    println("Conteúdos: ${formacaoKotlin.conteudos.map { it.nome }}")
+    println("Inscritos: ${formacaoKotlin.inscritos.map { it.nome }}")
 }
